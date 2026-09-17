@@ -1,6 +1,6 @@
 # Ubuntu Sans Mono derivative vnm
 
-**Upright Regular prototype build project, version 0.1.1 (archive v3).**
+**Upright Regular prototype build project, version 0.1.1.**
 
 This project implements Bront's final targeted character designs on a static
 instance of Canonical's Ubuntu Sans Mono v1.100. The installed family name is
