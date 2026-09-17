@@ -1,0 +1,21 @@
+{
+  "date": "2026-09-17",
+  "project": "Ubuntu Sans Mono derivative vnm",
+  "version": "0.1.0",
+  "delivered_artifact": "prototype build project without font data",
+  "synthetic_tests": {
+    "status": "PASS",
+    "count": 22,
+    "command": "python -m unittest discover -s tests -v"
+  },
+  "python_compile": "PASS",
+  "unix_wrapper_syntax": "PASS",
+  "windows_wrapper_execution": "NOT RUN",
+  "fonttools_version": "4.63.0",
+  "pillow_version": "12.3.0",
+  "actual_pinned_font_build": "NOT RUN - complete inputs unavailable in implementation environment",
+  "actual_font_visual_acceptance": "NOT RUN",
+  "platform_and_terminal_rendering_acceptance": "NOT RUN",
+  "production_hinting": "NOT IMPLEMENTED",
+  "bold_italic_variable_family": "NOT IMPLEMENTED"
+}

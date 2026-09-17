@@ -1,0 +1,37 @@
+SYNTHETIC-FONT TEST RUN ONLY
+Not a real Ubuntu Sans Mono/Bront build or visual acceptance result.
+Source weight 560 below belongs to artificial test masters, not the actual font.
+
+test_all_advance_widths_and_ids_are_preserved (test_vnm_font.DerivativeTests.test_all_advance_widths_and_ids_are_preserved) ... ok
+test_anchor_top_moves_and_invalid_point_index_removed (test_vnm_font.DerivativeTests.test_anchor_top_moves_and_invalid_point_index_removed) ... ok
+test_complete_offline_driver_and_proofs_with_synthetic_inputs (test_vnm_font.DerivativeTests.test_complete_offline_driver_and_proofs_with_synthetic_inputs) ... Building an upright Regular prototype; production hinting and visual acceptance are not certified.
+Upstream source weight: 560
+Created <temporary synthetic-test directory>/UbuntuSansMonoDerivativeVnm-Regular.ttf
+Validation: PASS
+Review: Alternate zero designs retained from upstream: zero.osf
+Rendered proof-characters.png, proof-reading.png, proof-symbols.png
+ok
+test_core_is_thirteen_and_excludes_i (test_vnm_font.DerivativeTests.test_core_is_thirteen_and_excludes_i) ... ok
+test_corrupt_cached_input_is_not_used (test_vnm_font.DerivativeTests.test_corrupt_cached_input_is_not_used) ... ok
+test_derivative_name_all_platforms (test_vnm_font.DerivativeTests.test_derivative_name_all_platforms) ... ok
+test_direct_composite_tracks_base_and_top_mark_moves (test_vnm_font.DerivativeTests.test_direct_composite_tracks_base_and_top_mark_moves) ... ok
+test_every_keyboard_glyph_is_nonempty_and_within_cell (test_vnm_font.DerivativeTests.test_every_keyboard_glyph_is_nonempty_and_within_cell) ... ok
+test_existing_keyboard_glyph_not_overwritten (test_vnm_font.DerivativeTests.test_existing_keyboard_glyph_not_overwritten) ... ok
+test_flattened_accent_replacement (test_vnm_font.DerivativeTests.test_flattened_accent_replacement) ... ok
+test_git_blob_hash_convention (test_vnm_font.DerivativeTests.test_git_blob_hash_convention) ... ok
+test_hyphen_underscore_width_equal_operators_centered (test_vnm_font.DerivativeTests.test_hyphen_underscore_width_equal_operators_centered) ... ok
+test_lowercase_i_outline_and_instructions_survive (test_vnm_font.DerivativeTests.test_lowercase_i_outline_and_instructions_survive) ... ok
+test_missing_coverage_is_detected (test_vnm_font.DerivativeTests.test_missing_coverage_is_detected) ... ok
+test_missing_source_character_is_rejected (test_vnm_font.DerivativeTests.test_missing_source_character_is_rejected) ... ok
+test_offline_missing_input_is_explained (test_vnm_font.DerivativeTests.test_offline_missing_input_is_explained) ... ok
+test_optional_extras_disabled (test_vnm_font.DerivativeTests.test_optional_extras_disabled) ... ok
+test_save_is_reproducible (test_vnm_font.DerivativeTests.test_save_is_reproducible) ... ok
+test_static_roundtrip_and_structural_validation (test_vnm_font.DerivativeTests.test_static_roundtrip_and_structural_validation) ... ok
+test_unrelated_outline_mutation_is_detected (test_vnm_font.DerivativeTests.test_unrelated_outline_mutation_is_detected) ... ok
+test_variation_weight_auto_and_real_instancing_on_synthetic_masters (test_vnm_font.DerivativeTests.test_variation_weight_auto_and_real_instancing_on_synthetic_masters) ... ok
+test_weight_stem_measurement (test_vnm_font.DerivativeTests.test_weight_stem_measurement) ... ok
+
+----------------------------------------------------------------------
+Ran 22 tests in 2.048s
+
+OK
