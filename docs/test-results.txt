@@ -1,3 +1,7 @@
+test_directional_arrows_are_in_keyboard_set (test_directional_arrows.DirectionalArrowTests.test_directional_arrows_are_in_keyboard_set) ... ok
+test_existing_arrow_not_overwritten (test_directional_arrows.DirectionalArrowTests.test_existing_arrow_not_overwritten) ... ok
+test_full_font_build_adds_distinct_arrow_mappings (test_directional_arrows.DirectionalArrowTests.test_full_font_build_adds_distinct_arrow_mappings) ... ok
+test_geometry_is_nonempty_and_within_cell (test_directional_arrows.DirectionalArrowTests.test_geometry_is_nonempty_and_within_cell) ... ok
 test_bad_metrics_are_rejected (test_return_symbol.ReturnSymbolTests.test_bad_metrics_are_rejected) ... ok
 test_direct_freetype_render_is_hollow (test_return_symbol.ReturnSymbolTests.test_direct_freetype_render_is_hollow) ... ok
 test_existing_upstream_return_symbol_is_preserved (test_return_symbol.ReturnSymbolTests.test_existing_upstream_return_symbol_is_preserved) ... ok
@@ -12,7 +16,7 @@ test_all_advance_widths_and_ids_are_preserved (test_vnm_font.DerivativeTests.tes
 test_anchor_top_moves_and_invalid_point_index_removed (test_vnm_font.DerivativeTests.test_anchor_top_moves_and_invalid_point_index_removed) ... ok
 test_complete_offline_driver_and_proofs_with_synthetic_inputs (test_vnm_font.DerivativeTests.test_complete_offline_driver_and_proofs_with_synthetic_inputs) ... Building an upright Regular prototype; production hinting and visual acceptance are not certified.
 Upstream source weight: 560
-Created /tmp/tmpyy0fbd5e/out/UbuntuSansMonoDerivativeVnm-Regular.ttf
+Created /tmp/tmp6dvx91pj/out/UbuntuSansMonoDerivativeVnm-Regular.ttf
 Validation: PASS
 Review: Alternate zero designs retained from upstream: zero.osf
 Rendered proof-characters.png, proof-reading.png, proof-symbols.png
@@ -38,6 +42,6 @@ test_variation_weight_auto_and_real_instancing_on_synthetic_masters (test_vnm_fo
 test_weight_stem_measurement (test_vnm_font.DerivativeTests.test_weight_stem_measurement) ... ok
 
 ----------------------------------------------------------------------
-Ran 32 tests in 2.034s
+Ran 36 tests in 2.145s
 
 OK

@@ -1,6 +1,6 @@
 # Ubuntu Sans Mono derivative vnm
 
-**Upright Regular prototype build project, version 0.1.1.**
+**Upright Regular prototype build project, version 0.1.2.**
 
 This project implements Bront's final targeted character designs on a static
 instance of Canonical's Ubuntu Sans Mono v1.100. The installed family name is
@@ -14,7 +14,7 @@ The new glyph is single-cell and is included in normal builds and
 `proof-symbols.png`. `--no-keyboard` disables it with the other keyboard extras.
 Any pre-existing upstream U+23CE mapping is preserved, not overwritten.
 
-The **32-test suite** includes tests of the actual procedural U+23CE drawing:
+The **36-test suite** includes tests of the actual procedural U+23CE drawing and the added ordinary directional arrows:
 opposite contour winding, open interior, save/reload, direct FreeType rendering,
 and preservation of existing mappings. The complete host fonts in these tests
 are synthetic. The new glyph alone is previewed in
@@ -130,8 +130,8 @@ Alternate zeros such as oldstyle figures also remain upstream designs and are
 reported separately.
 
 Missing `⌫` U+232B, `⌦` U+2326, `↵` U+21B5, `⇥` U+21E5, `⇤` U+21E4, `↹` U+21B9,
-`⇧` U+21E7, `⇩` U+21E9, `⇪` U+21EA, `⎆` U+2386 and `⏎` U+23CE receive original
-procedural outlines. Seven missing Bront Powerline private-use symbols are added.
+`⇧` U+21E7, `⇩` U+21E9, `⇪` U+21EA, `⎆` U+2386, `⏎` U+23CE, and ordinary arrows
+`←` U+2190, `↑` U+2191, `→` U+2192, `↓` U+2193 receive original procedural outlines. Seven missing Bront Powerline private-use symbols are added.
 Existing mappings are never replaced for these extras. Disable these additions
 with `--no-keyboard` and/or `--no-powerline` when testing the core port alone.
 

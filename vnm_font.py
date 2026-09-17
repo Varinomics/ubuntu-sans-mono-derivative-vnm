@@ -38,11 +38,11 @@ from fontTools.varLib.instancer import instantiateVariableFont
 
 FAMILY = "Ubuntu Sans Mono derivative vnm"
 PS_NAME = "UbuntuSansMonoDerivativeVnm-Regular"
-VERSION = "0.1.1"
+VERSION = "0.1.2"
 CORE = "$0*_- =~%GjlJt".replace(" ", "")
 LETTERS = "GjlJt"
 POWERLINE = (0xE0A0, 0xE0A1, 0xE0A2, 0xE0B0, 0xE0B1, 0xE0B2, 0xE0B3)
-KEYBOARD = (0x232B, 0x2326, 0x21B5, 0x21E5, 0x21E4, 0x21B9, 0x21E7, 0x21E9, 0x21EA, 0x2386, 0x23CE)
+KEYBOARD = (0x232B, 0x2326, 0x21B5, 0x21E5, 0x21E4, 0x21B9, 0x21E7, 0x21E9, 0x21EA, 0x2386, 0x23CE, 0x2190, 0x2191, 0x2192, 0x2193)
 UPSTREAM_REV = "c57353c1772eb8aaab9c539e3d42c971a03a5fcd"
 BRONT_REV = "aef23d9a11416655a8351230edb3c2377061c077"
 # Git object identifiers taken from GitHub's contents API, not ordinary SHA-1s.
@@ -495,6 +495,30 @@ def keyboard_glyph(cp: int, width: float, cap: float, stem: float) -> Glyph:
         else:
             raise ValueError(direction)
 
+    def draw_directional_arrow(direction: str) -> None:
+        mid = width/2
+        x1, x2 = mid - s/2, mid + s/2
+        head_w = width*.23
+        head_h = (top-bottom)*.23
+        if direction == "up":
+            shaft_bottom, shaft_top = bottom, top - head_h
+            polygon(pen, [(mid,top),(mid-head_w,shaft_top),(x1,shaft_top),(x1,shaft_bottom),
+                          (x2,shaft_bottom),(x2,shaft_top),(mid+head_w,shaft_top)])
+        elif direction == "down":
+            shaft_bottom, shaft_top = bottom + head_h, top
+            polygon(pen, [(mid,bottom),(mid-head_w,shaft_bottom),(x1,shaft_bottom),(x1,shaft_top),
+                          (x2,shaft_top),(x2,shaft_bottom),(mid+head_w,shaft_bottom)])
+        elif direction == "right":
+            shaft_left, shaft_right = left, right - head_w
+            polygon(pen, [(right,cy),(shaft_right,cy+head_h),(shaft_right,cy+s/2),(shaft_left,cy+s/2),
+                          (shaft_left,cy-s/2),(shaft_right,cy-s/2),(shaft_right,cy-head_h)])
+        elif direction == "left":
+            shaft_left, shaft_right = left + head_w, right
+            polygon(pen, [(left,cy),(shaft_left,cy+head_h),(shaft_left,cy+s/2),(shaft_right,cy+s/2),
+                          (shaft_right,cy-s/2),(shaft_left,cy-s/2),(shaft_left,cy-head_h)])
+        else:
+            raise ValueError(direction)
+
     if cp in (0x232B, 0x2326):
         neck = left+width*.23
         outer = [(left,cy), (neck,top), (right,top), (right,bottom), (neck,bottom)]
@@ -573,6 +597,14 @@ def keyboard_glyph(cp: int, width: float, cap: float, stem: float) -> Glyph:
         draw_white_arrow("down")
     elif cp == 0x21EA:
         draw_white_arrow("up", with_bar=True)
+    elif cp == 0x2190:
+        draw_directional_arrow("left")
+    elif cp == 0x2191:
+        draw_directional_arrow("up")
+    elif cp == 0x2192:
+        draw_directional_arrow("right")
+    elif cp == 0x2193:
+        draw_directional_arrow("down")
     elif cp == 0x2386:
         box_left, box_right = left + width*.09, right - width*.09
         box_bottom, box_top = bottom + cap*.05, top
@@ -626,8 +658,8 @@ def rename(font: TTFont, epoch: int) -> None:
     names_to_replace = {1,2,3,4,5,6,16,17,18,21,22,25}
     names.names = [record for record in names.names if record.nameID not in names_to_replace]
     values = {
-        1: FAMILY, 2: "Regular", 3: f"1.102;VNM;{PS_NAME}",
-        4: f"{FAMILY} Regular", 5: f"Version 1.102; vnm {VERSION}; upstream 1.100",
+        1: FAMILY, 2: "Regular", 3: f"1.103;VNM;{PS_NAME}",
+        4: f"{FAMILY} Regular", 5: f"Version 1.103; vnm {VERSION}; upstream 1.100",
         6: PS_NAME, 16: FAMILY, 17: "Regular",
     }
     for key, value in values.items():
@@ -644,7 +676,7 @@ def rename(font: TTFont, epoch: int) -> None:
     font["OS/2"].usWeightClass = 400  # derivative family's named Regular style
     font["OS/2"].fsSelection = (font["OS/2"].fsSelection & ~((1<<0)|(1<<5)|(1<<9))) | (1<<6)
     font["head"].macStyle &= ~3
-    font["head"].fontRevision = 1.102
+    font["head"].fontRevision = 1.103
     font["head"].created = font["head"].modified = epoch + 2082844800
     font.recalcTimestamp = False
     font["post"].italicAngle = 0

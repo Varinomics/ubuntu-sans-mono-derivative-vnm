@@ -89,8 +89,9 @@ The builder requires complete upstream box drawing (128 mappings), block element
 (32) and Braille (256) in its full-font output. It preserves every pre-existing
 best-Unicode-cmap mapping, not only these blocks.
 
-Eleven missing keyboard symbols receive original procedural single-cell outlines:
-U+232B, U+2326, U+21B5, U+21E5, U+21E4, U+21B9, U+21E7, U+21E9, U+21EA, U+2386 and U+23CE. Seven missing Powerline symbols are taken from
+Fifteen missing keyboard/arrow symbols receive original procedural single-cell outlines:
+U+232B, U+2326, U+21B5, U+21E5, U+21E4, U+21B9, U+21E7, U+21E9, U+21EA, U+2386, U+23CE,
+U+2190, U+2191, U+2192 and U+2193. Seven missing Powerline symbols are taken from
 Bront: U+E0A0-E0A2 and U+E0B0-E0B3. Native existing glyphs at these positions are
 not overwritten. These additions can be disabled independently.
 
@@ -111,7 +112,7 @@ changes in compatible source masters. This first binary-outline overlay is a
 bounded prototype and reference implementation for that work, not a claim that
 those later stages are already finished.
 
-## U+23CE hollow Return symbol (archive v3)
+## U+23CE hollow Return symbol and ordinary arrows
 
 Unicode names U+23CE RETURN SYMBOL and permits a hollow or filled drawing:
 https://www.unicode.org/charts/nameslist/n_2300.html#23CE
@@ -126,6 +127,5 @@ as the straight edges. No enclosing keycap rectangle is drawn. Its advance is
 the existing H advance, as for the other added keyboard symbols. Existing line
 metrics and glyph IDs are preserved. Added glyphs receive no TrueType hinting.
 
-This revision does not redesign the existing ten keyboard glyphs, add ordinary
-arrows, or claim that the other white-arrow symbols have been redrawn as hollow.
-The small source-version increment is 0.1.1; the output font revision is 1.102.
+This revision adds ordinary arrows U+2190/U+2191/U+2192/U+2193 as separate filled single-cell symbols. The existing white-arrow keyboard symbols remain distinct.
+The small source-version increment is 0.1.2; the output font revision is 1.103.

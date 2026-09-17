@@ -1,11 +1,11 @@
 {
   "date": "2026-09-17",
   "project": "Ubuntu Sans Mono derivative vnm",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "delivered_artifact": "prototype build project without font data",
   "synthetic_tests": {
     "status": "PASS",
-    "count": 32,
+    "count": 36,
     "command": "python -m unittest discover -s tests -v"
   },
   "python_compile": "PASS",
@@ -19,7 +19,7 @@
   "production_hinting": "NOT IMPLEMENTED",
   "bold_italic_variable_family": "NOT IMPLEMENTED",
   "archive_revision": "v3",
-  "output_font_revision": "1.102",
+  "output_font_revision": "1.103",
   "return_symbol": {
     "codepoint": "U+23CE",
     "name": "RETURN SYMBOL",

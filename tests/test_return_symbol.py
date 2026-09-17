@@ -41,14 +41,15 @@ class ReturnSymbolTests(unittest.TestCase):
 
     def test_explicit_keyboard_set_includes_u23ce_without_aliases(self):
         expected = {0x232B, 0x2326, 0x21B5, 0x21E5, 0x21E4, 0x21B9,
-                    0x21E7, 0x21E9, 0x21EA, 0x2386, 0x23CE}
+                    0x21E7, 0x21E9, 0x21EA, 0x2386, 0x23CE,
+                    0x2190, 0x2191, 0x2192, 0x2193}
         self.assertEqual(set(v.KEYBOARD), expected)
         self.assertEqual(len(v.KEYBOARD), len(expected))
         result, report = self.build()
         name = v.required(result, CP)
         self.assertEqual(name, "vnm.uni23CE")
-        self.assertIn("Version 1.102", result["name"].getDebugName(5))
-        self.assertIn("vnm 0.1.1", result["name"].getDebugName(5))
+        self.assertIn("Version 1.103", result["name"].getDebugName(5))
+        self.assertIn("vnm 0.1.2", result["name"].getDebugName(5))
         self.assertNotEqual(name, v.required(result, 0x21B5))
         self.assertNotEqual(name, v.required(result, 0x2386))
         for other in (0x21B5, 0x2386):

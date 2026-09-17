@@ -85,7 +85,7 @@ def make_proofs(output: Path, bront_path: Path) -> list[str]:
     for px in (16,24,40):
         face=load(derivative,px)
         d.text((30,y),f"{px}px",font=label,fill="black");y+=33
-        for text in ["⌫  ⌦  ↵  ⇥  ⇤  ↹  ⇧  ⇩  ⇪  ⎆  ⏎", "╭──────────────╮  ┌────────┐  ╔════════╗",
+        for text in ["⌫  ⌦  ↵  ⇥  ⇤  ↹  ⇧  ⇩  ⇪  ⎆  ⏎", "←  ↑  →  ↓", "╭──────────────╮  ┌────────┐  ╔════════╗",
                      "│ a__b * ~mask │  │ 0x00FF │  ║ G j l t║",
                      "╰──────────────╯  └────────┘  ╚════════╝",
                      "▁▂▃▄▅▆▇█  ▏▎▍▌▋▊▉█  ░▒▓█",
