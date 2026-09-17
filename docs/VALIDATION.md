@@ -1,9 +1,9 @@
-# Validation status — 17 September 2026
+# Validation status - 17 September 2026
 
 ## Completed here
 
 The Python implementation was imported and compiled with fontTools 4.63.0 and
-Pillow 12.3.0. The unittest suite passed using **generated synthetic fonts**.
+Pillow 12.3.0. The **32-test unittest suite** passed using **generated synthetic host fonts**.
 See `validation-status.json` and `test-results.txt` for the recorded result.
 
 The suite checks the 13-target set; stem measurement; variation-weight selection;
@@ -17,9 +17,23 @@ coverage and unrelated-outline regressions. The complete driver and all three
 PNG proof outputs also run with synthetic inputs.
 
 **Synthetic fixtures exercise mechanisms, not the actual target designs.** The
-synthetic source weight, glyph counts and proof images are not measurements or
-previews of Ubuntu Sans Mono derivative vnm. No such fake font proof is included
-in this archive.
+synthetic source weight, glyph counts and whole-font proof images are not
+measurements or previews of a complete Ubuntu Sans Mono derivative vnm font.
+No whole-font proof based on synthetic alphabet shapes is included.
+
+The included `return-symbol-preview.png` is explicitly a **glyph-only proof**:
+it renders the actual U+23CE procedural implementation at width 560, cap height
+700 and stem 65 in a 1000-unit em, in a temporary in-memory host font. The PNG
+was inspected at enlarged and native 16/20/24/32/48 pixel sizes on light and dark
+backgrounds. It does not establish Windows/Qt or actual Ubuntu font rendering.
+
+Ten U+23CE regression tests were added. They cover its distinct mapping, complete
+keyboard set, two oppositely wound contours, transparent head/arms/elbow,
+positive rim ink, metrics at four representative width/height/stem combinations,
+invalid metrics, preservation of an upstream U+23CE, `--no-keyboard`, rejection
+of a missing mapping, save/reload, direct FreeType raster checks, single-cell
+advances and inclusion in the main proof sheet. BASIC layout grid-fits advances;
+the small-size tests compare against H rather than assuming fractional advances.
 
 ## Not completed here
 

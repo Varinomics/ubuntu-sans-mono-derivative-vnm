@@ -1,11 +1,11 @@
 {
   "date": "2026-09-17",
   "project": "Ubuntu Sans Mono derivative vnm",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "delivered_artifact": "prototype build project without font data",
   "synthetic_tests": {
     "status": "PASS",
-    "count": 22,
+    "count": 32,
     "command": "python -m unittest discover -s tests -v"
   },
   "python_compile": "PASS",
@@ -13,9 +13,28 @@
   "windows_wrapper_execution": "NOT RUN",
   "fonttools_version": "4.63.0",
   "pillow_version": "12.3.0",
-  "actual_pinned_font_build": "NOT RUN - complete inputs unavailable in implementation environment",
+  "actual_pinned_font_build": "NOT RUN - raw.githubusercontent.com retrieval failed (DNS unavailable)",
   "actual_font_visual_acceptance": "NOT RUN",
   "platform_and_terminal_rendering_acceptance": "NOT RUN",
   "production_hinting": "NOT IMPLEMENTED",
-  "bold_italic_variable_family": "NOT IMPLEMENTED"
+  "bold_italic_variable_family": "NOT IMPLEMENTED",
+  "archive_revision": "v3",
+  "output_font_revision": "1.102",
+  "return_symbol": {
+    "codepoint": "U+23CE",
+    "name": "RETURN SYMBOL",
+    "design": "hollow bent left-pointing arrow",
+    "new_regression_tests": 10,
+    "save_reload_and_raster_tests": "PASS",
+    "glyph_only_preview": "docs/return-symbol-preview.png",
+    "glyph_only_preview_visually_inspected": true,
+    "preview_metrics": {
+      "units_per_em": 1000,
+      "advance": 560,
+      "cap_height": 700,
+      "stem": 65
+    },
+    "host_font_scope": "Synthetic host; procedural U+23CE outline is the implementation itself",
+    "full_actual_font_rendering": "NOT RUN"
+  }
 }

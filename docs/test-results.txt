@@ -1,12 +1,18 @@
-SYNTHETIC-FONT TEST RUN ONLY
-Not a real Ubuntu Sans Mono/Bront build or visual acceptance result.
-Source weight 560 below belongs to artificial test masters, not the actual font.
-
+test_bad_metrics_are_rejected (test_return_symbol.ReturnSymbolTests.test_bad_metrics_are_rejected) ... ok
+test_direct_freetype_render_is_hollow (test_return_symbol.ReturnSymbolTests.test_direct_freetype_render_is_hollow) ... ok
+test_existing_upstream_return_symbol_is_preserved (test_return_symbol.ReturnSymbolTests.test_existing_upstream_return_symbol_is_preserved) ... ok
+test_explicit_keyboard_set_includes_u23ce_without_aliases (test_return_symbol.ReturnSymbolTests.test_explicit_keyboard_set_includes_u23ce_without_aliases) ... ok
+test_geometry_survives_different_metrics (test_return_symbol.ReturnSymbolTests.test_geometry_survives_different_metrics) ... ok
+test_hollow_outline_survives_full_font_roundtrip (test_return_symbol.ReturnSymbolTests.test_hollow_outline_survives_full_font_roundtrip) ... ok
+test_missing_return_mapping_fails_validation (test_return_symbol.ReturnSymbolTests.test_missing_return_mapping_fails_validation) ... ok
+test_no_keyboard_disables_the_new_addition (test_return_symbol.ReturnSymbolTests.test_no_keyboard_disables_the_new_addition) ... ok
+test_return_symbol_appears_in_main_proof (test_return_symbol.ReturnSymbolTests.test_return_symbol_appears_in_main_proof) ... ok
+test_two_opposite_winding_contours_form_a_real_hole (test_return_symbol.ReturnSymbolTests.test_two_opposite_winding_contours_form_a_real_hole) ... ok
 test_all_advance_widths_and_ids_are_preserved (test_vnm_font.DerivativeTests.test_all_advance_widths_and_ids_are_preserved) ... ok
 test_anchor_top_moves_and_invalid_point_index_removed (test_vnm_font.DerivativeTests.test_anchor_top_moves_and_invalid_point_index_removed) ... ok
 test_complete_offline_driver_and_proofs_with_synthetic_inputs (test_vnm_font.DerivativeTests.test_complete_offline_driver_and_proofs_with_synthetic_inputs) ... Building an upright Regular prototype; production hinting and visual acceptance are not certified.
 Upstream source weight: 560
-Created <temporary synthetic-test directory>/UbuntuSansMonoDerivativeVnm-Regular.ttf
+Created /tmp/tmpyy0fbd5e/out/UbuntuSansMonoDerivativeVnm-Regular.ttf
 Validation: PASS
 Review: Alternate zero designs retained from upstream: zero.osf
 Rendered proof-characters.png, proof-reading.png, proof-symbols.png
@@ -32,6 +38,6 @@ test_variation_weight_auto_and_real_instancing_on_synthetic_masters (test_vnm_fo
 test_weight_stem_measurement (test_vnm_font.DerivativeTests.test_weight_stem_measurement) ... ok
 
 ----------------------------------------------------------------------
-Ran 22 tests in 2.048s
+Ran 32 tests in 2.034s
 
 OK

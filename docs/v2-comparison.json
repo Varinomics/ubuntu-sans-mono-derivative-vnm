@@ -1,0 +1,20 @@
+{
+  "scope": "v2-to-v3 comparison with synthetic host and donor fonts, not a full Ubuntu build",
+  "status": "PASS",
+  "new_mappings": [
+    "U+23CE"
+  ],
+  "all_existing_mappings_preserved": true,
+  "upstream_glyph_ids_preserved": true,
+  "relative_order_of_all_existing_glyphs_preserved": true,
+  "generated_powerline_ids_shift_by_one": "New keyboard glyph is added before Powerline; source-font IDs are unaffected",
+  "all_existing_outlines_preserved": true,
+  "all_existing_horizontal_metrics_preserved": true,
+  "previous_glyph_count": 536,
+  "new_glyph_count": 537,
+  "existing_keyboard_outlines_compared": 10,
+  "expected_metadata_changes": {
+    "builder_version": "0.1.1",
+    "output_font_revision": "1.102"
+  }
+}

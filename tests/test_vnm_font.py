@@ -136,7 +136,8 @@ class DerivativeTests(unittest.TestCase):
             baseline=TTFont(io.BytesIO((p/"baseline.ttf").read_bytes()))
             checked=v.validate(baseline,reread,report)
         self.assertEqual(checked["status"],"PASS")
-        self.assertEqual(checked["result_mapped_codepoints"]-checked["upstream_mapped_codepoints"],11)
+        self.assertEqual(checked["result_mapped_codepoints"]-checked["upstream_mapped_codepoints"],
+                         len(v.KEYBOARD)+len(v.POWERLINE))
         self.assertEqual(len(report["operations"]),13)
 
     def test_lowercase_i_outline_and_instructions_survive(self):
@@ -192,7 +193,7 @@ class DerivativeTests(unittest.TestCase):
         self.assertEqual(v.required(result,0x232B),"existingBackspace")
         self.assertEqual(v.outline_signature(result,"existingBackspace"),
                          v.outline_signature(self.upstream,"existingBackspace"))
-        self.assertEqual(len(report["added_glyphs"]),10)
+        self.assertEqual(len(report["added_glyphs"]),len(v.KEYBOARD)+len(v.POWERLINE)-1)
 
     def test_optional_extras_disabled(self):
         result,report=v.build_variant(self.upstream,self.original,self.bront,keyboard=False,powerline=False)

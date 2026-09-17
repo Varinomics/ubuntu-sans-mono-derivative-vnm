@@ -1,10 +1,27 @@
 # Ubuntu Sans Mono derivative vnm
 
-**Upright Regular prototype build project, version 0.1.0.**
+**Upright Regular prototype build project, version 0.1.1 (archive v3).**
 
 This project implements Bront's final targeted character designs on a static
 instance of Canonical's Ubuntu Sans Mono v1.100. The installed family name is
 exactly **Ubuntu Sans Mono derivative vnm**. Lowercase `vnm` is intentional.
+
+## U+23CE correction in this revision
+
+`⏎` **U+23CE RETURN SYMBOL** now has its own hollow bent-arrow outline. It is
+not an alias for `↵` U+21B5 or `⎆` U+2386; both existing symbols are unchanged.
+The new glyph is single-cell and is included in normal builds and
+`proof-symbols.png`. `--no-keyboard` disables it with the other keyboard extras.
+Any pre-existing upstream U+23CE mapping is preserved, not overwritten.
+
+The **32-test suite** includes tests of the actual procedural U+23CE drawing:
+opposite contour winding, open interior, save/reload, direct FreeType rendering,
+and preservation of existing mappings. The complete host fonts in these tests
+are synthetic. The new glyph alone is previewed in
+[`docs/return-symbol-preview.png`](docs/return-symbol-preview.png), using explicit
+representative metrics rather than claiming a complete Ubuntu/Bront build.
+Regenerate that standalone preview after installing requirements with
+`python proof_return.py`. This command needs no upstream font downloads.
 
 ## Verification status - read before using
 
@@ -112,7 +129,8 @@ that cannot safely be reconstructed are retained and reported as warnings.
 Alternate zeros such as oldstyle figures also remain upstream designs and are
 reported separately.
 
-Missing `⌫` U+232B, `⌦` U+2326, `↵` U+21B5 and `⇥` U+21E5 receive original
+Missing `⌫` U+232B, `⌦` U+2326, `↵` U+21B5, `⇥` U+21E5, `⇤` U+21E4, `↹` U+21B9,
+`⇧` U+21E7, `⇩` U+21E9, `⇪` U+21EA, `⎆` U+2386 and `⏎` U+23CE receive original
 procedural outlines. Seven missing Bront Powerline private-use symbols are added.
 Existing mappings are never replaced for these extras. Disable these additions
 with `--no-keyboard` and/or `--no-powerline` when testing the core port alone.

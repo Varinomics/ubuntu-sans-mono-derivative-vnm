@@ -38,11 +38,11 @@ from fontTools.varLib.instancer import instantiateVariableFont
 
 FAMILY = "Ubuntu Sans Mono derivative vnm"
 PS_NAME = "UbuntuSansMonoDerivativeVnm-Regular"
-VERSION = "0.1.0"
+VERSION = "0.1.1"
 CORE = "$0*_- =~%GjlJt".replace(" ", "")
 LETTERS = "GjlJt"
 POWERLINE = (0xE0A0, 0xE0A1, 0xE0A2, 0xE0B0, 0xE0B1, 0xE0B2, 0xE0B3)
-KEYBOARD = (0x232B, 0x2326, 0x21B5, 0x21E5)
+KEYBOARD = (0x232B, 0x2326, 0x21B5, 0x21E5, 0x21E4, 0x21B9, 0x21E7, 0x21E9, 0x21EA, 0x2386, 0x23CE)
 UPSTREAM_REV = "c57353c1772eb8aaab9c539e3d42c971a03a5fcd"
 BRONT_REV = "aef23d9a11416655a8351230edb3c2377061c077"
 # Git object identifiers taken from GitHub's contents API, not ordinary SHA-1s.
@@ -459,6 +459,42 @@ def keyboard_glyph(cp: int, width: float, cap: float, stem: float) -> Glyph:
     left, right = width*.07, width*.93
     bottom, top = cap*.22, cap*.78
     cy = (bottom+top)/2
+
+    def draw_tab(y: float, direction: str) -> None:
+        if direction == "right":
+            neck, tip, bar = width*.51, width*.77, width*.88
+            polygon(pen, [(left,y-s/2),(neck,y-s/2),(neck,y-(top-bottom)*.18),(tip,y),
+                          (neck,y+(top-bottom)*.18),(neck,y+s/2),(left,y+s/2)])
+            polygon(pen, [(bar-s/2,y-(top-bottom)*.28),(bar-s/2,y+(top-bottom)*.28),
+                          (bar+s/2,y+(top-bottom)*.28),(bar+s/2,y-(top-bottom)*.28)])
+        elif direction == "left":
+            neck, tip, bar = width*.49, width*.23, width*.12
+            polygon(pen, [(right,y-s/2),(neck,y-s/2),(neck,y-(top-bottom)*.18),(tip,y),
+                          (neck,y+(top-bottom)*.18),(neck,y+s/2),(right,y+s/2)])
+            polygon(pen, [(bar-s/2,y-(top-bottom)*.28),(bar-s/2,y+(top-bottom)*.28),
+                          (bar+s/2,y+(top-bottom)*.28),(bar+s/2,y-(top-bottom)*.28)])
+        else:
+            raise ValueError(direction)
+
+    def draw_white_arrow(direction: str, with_bar: bool = False) -> None:
+        mid = width/2
+        x1, x2 = mid - s/2, mid + s/2
+        head_w = width*.24
+        head_h = (top-bottom)*.28
+        if direction == "up":
+            shaft_bottom, shaft_top = bottom + (s*2.2 if with_bar else 0), top - head_h
+            polygon(pen, [(mid,top),(mid-head_w,shaft_top),(x1,shaft_top),(x1,shaft_bottom),
+                          (x2,shaft_bottom),(x2,shaft_top),(mid+head_w,shaft_top)])
+            if with_bar:
+                polygon(pen, [(left+width*.18,bottom),(right-width*.18,bottom),
+                              (right-width*.18,bottom+s),(left+width*.18,bottom+s)])
+        elif direction == "down":
+            shaft_bottom, shaft_top = bottom + head_h, top
+            polygon(pen, [(mid,bottom),(mid-head_w,shaft_bottom),(x1,shaft_bottom),(x1,shaft_top),
+                          (x2,shaft_top),(x2,shaft_bottom),(mid+head_w,shaft_bottom)])
+        else:
+            raise ValueError(direction)
+
     if cp in (0x232B, 0x2326):
         neck = left+width*.23
         outer = [(left,cy), (neck,top), (right,top), (right,bottom), (neck,bottom)]
@@ -488,14 +524,73 @@ def keyboard_glyph(cp: int, width: float, cap: float, stem: float) -> Glyph:
                   (tail-s/2,y+s/2), (tail-s/2,cap*.9), (tail+s/2,cap*.9),
                   (tail+s/2,y-s/2), (neck,y-s/2), (neck,y-rise)]
         polygon(pen, points)
+    elif cp == 0x23CE:
+        # RETURN SYMBOL: a hollow bent arrow, NOT the boxed ENTER SYMBOL
+        # U+2386 and NOT an alias to the filled corner arrow U+21B5.
+        if any(not math.isfinite(v) or v <= 0 for v in (width, cap, stem)):
+            raise ValueError("Return-symbol width, cap height and stem must be finite and positive")
+        tip, neck, tail_right = width*.08, width*.42, width*.92
+        y, rise, tail_top = cap*.37, cap*.22, cap*.90
+        half = min(width*.14, cap*.105)
+        tail_left = tail_right - 2*half
+        # Limit wall thickness so both arms retain a real hollow interior,
+        # including for heavier source instances. All dimensions scale with
+        # the font: no pixel-size or fixed-font-unit thickness assumption.
+        wall = min(stem*.62, half*.44)
+        outer = [(tip,y), (neck,y+rise), (neck,y+half),
+                 (tail_left,y+half), (tail_left,tail_top),
+                 (tail_right,tail_top), (tail_right,y-half),
+                 (neck,y-half), (neck,y-rise)]
+        # Offset the two sloping head edges by the same perpendicular wall
+        # thickness as the axis-aligned edges. A uniformly scaled inner arrow
+        # would leave uneven walls and can close off the hollow elbow.
+        slope = rise/(neck-tip)
+        diagonal_offset = wall*math.sqrt(1+slope*slope)
+        inner_tip = tip + diagonal_offset/slope
+        inner_neck = neck - wall
+        inner_rise = rise - wall*slope - diagonal_offset
+        inner = [(inner_tip,y), (inner_neck,y+inner_rise),
+                 (inner_neck,y+half-wall),
+                 (tail_left+wall,y+half-wall),
+                 (tail_left+wall,tail_top-wall),
+                 (tail_right-wall,tail_top-wall),
+                 (tail_right-wall,y-half+wall),
+                 (inner_neck,y-half+wall), (inner_neck,y-inner_rise)]
+        # Opposite winding makes the inner contour a hole under the TrueType
+        # non-zero fill rule; neither a background-coloured fill nor a box.
+        polygon(pen, outer)
+        polygon(pen, inner, clockwise=False)
     elif cp == 0x21E5:
-        y = cap*.5
-        neck, tip, bar = width*.51, width*.77, width*.88
-        rise = cap*.21
-        polygon(pen, [(left,y-s/2),(neck,y-s/2),(neck,y-rise),(tip,y),
-                      (neck,y+rise),(neck,y+s/2),(left,y+s/2)])
-        polygon(pen, [(bar-s/2,cap*.2),(bar-s/2,cap*.8),
-                      (bar+s/2,cap*.8),(bar+s/2,cap*.2)])
+        draw_tab(cap*.5, "right")
+    elif cp == 0x21E4:
+        draw_tab(cap*.5, "left")
+    elif cp == 0x21B9:
+        draw_tab(cap*.36, "right")
+        draw_tab(cap*.64, "left")
+    elif cp == 0x21E7:
+        draw_white_arrow("up")
+    elif cp == 0x21E9:
+        draw_white_arrow("down")
+    elif cp == 0x21EA:
+        draw_white_arrow("up", with_bar=True)
+    elif cp == 0x2386:
+        box_left, box_right = left + width*.09, right - width*.09
+        box_bottom, box_top = bottom + cap*.05, top
+        polygon(pen, [(box_left,box_bottom),(box_left,box_top),(box_right,box_top),
+                      (box_right,box_bottom)])
+        inner_l, inner_r = box_left+s, box_right-s
+        inner_b, inner_t = box_bottom+s, box_top-s
+        polygon(pen, [(inner_l,inner_b),(inner_l,inner_t),(inner_r,inner_t),
+                      (inner_r,inner_b)], clockwise=False)
+        y = (inner_b+inner_t)/2
+        tip = inner_l + s*.35
+        neck = inner_l + (inner_r-inner_l)*.34
+        tail = inner_r - s*.75
+        rise = (inner_t-inner_b)*.18
+        polygon(pen, [(tip,y), (neck,y+rise), (neck,y+s/2),
+                      (tail-s/2,y+s/2), (tail-s/2,inner_t-s*.1),
+                      (tail+s/2,inner_t-s*.1), (tail+s/2,y-s/2),
+                      (neck,y-s/2), (neck,y-rise)])
     else:
         raise ValueError(f"Unsupported keyboard glyph U+{cp:04X}")
     result = pen.glyph()
@@ -531,8 +626,8 @@ def rename(font: TTFont, epoch: int) -> None:
     names_to_replace = {1,2,3,4,5,6,16,17,18,21,22,25}
     names.names = [record for record in names.names if record.nameID not in names_to_replace]
     values = {
-        1: FAMILY, 2: "Regular", 3: f"1.101;VNM;{PS_NAME}",
-        4: f"{FAMILY} Regular", 5: f"Version 1.101; vnm {VERSION}; upstream 1.100",
+        1: FAMILY, 2: "Regular", 3: f"1.102;VNM;{PS_NAME}",
+        4: f"{FAMILY} Regular", 5: f"Version 1.102; vnm {VERSION}; upstream 1.100",
         6: PS_NAME, 16: FAMILY, 17: "Regular",
     }
     for key, value in values.items():
@@ -549,7 +644,7 @@ def rename(font: TTFont, epoch: int) -> None:
     font["OS/2"].usWeightClass = 400  # derivative family's named Regular style
     font["OS/2"].fsSelection = (font["OS/2"].fsSelection & ~((1<<0)|(1<<5)|(1<<9))) | (1<<6)
     font["head"].macStyle &= ~3
-    font["head"].fontRevision = 1.101
+    font["head"].fontRevision = 1.102
     font["head"].created = font["head"].modified = epoch + 2082844800
     font.recalcTimestamp = False
     font["post"].italicAngle = 0
@@ -771,7 +866,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         (output/"reference-upstream-instance.ttf").write_bytes(baseline_path.read_bytes())
     (output/"Ubuntu-Font-Licence.txt").write_bytes(inputs["licence"].read_bytes())
     (output/"NOTICE.txt").write_text(
-        "Ubuntu Sans Mono derivative vnm — upright Regular prototype\n"
+        "Ubuntu Sans Mono derivative vnm - upright Regular prototype\n"
         "Based on Canonical's Ubuntu Sans Mono v1.100 and Chris Wendt's Ubuntu Mono - Bront.\n"
         "Font output is governed by the accompanying Ubuntu Font Licence 1.0.\n"
         "No endorsement by Canonical or Chris Wendt is implied.\n"
