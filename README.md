@@ -4,37 +4,9 @@
 
 This project implements Bront's final targeted character designs on a static
 instance of Canonical's Ubuntu Sans Mono v1.100. The installed family name is
-exactly **Ubuntu Sans Mono derivative vnm**. Lowercase `vnm` is intentional.
+exactly **Ubuntu Sans Mono derivative vnm**.
 
-## U+23CE correction in this revision
-
-`⏎` **U+23CE RETURN SYMBOL** now has its own hollow bent-arrow outline. It is
-not an alias for `↵` U+21B5 or `⎆` U+2386; both existing symbols are unchanged.
-The new glyph is single-cell and is included in normal builds and
-`proof-symbols.png`. `--no-keyboard` disables it with the other keyboard extras.
-Any pre-existing upstream U+23CE mapping is preserved, not overwritten.
-
-The **36-test suite** includes tests of the actual procedural U+23CE drawing and the added ordinary directional arrows:
-opposite contour winding, open interior, save/reload, direct FreeType rendering,
-and preservation of existing mappings. The complete host fonts in these tests
-are synthetic. The new glyph alone is previewed in
-[`docs/return-symbol-preview.png`](docs/return-symbol-preview.png), using explicit
-representative metrics rather than claiming a complete Ubuntu/Bront build.
-Regenerate that standalone preview after installing requirements with
-`python proof_return.py`. This command needs no upstream font downloads.
-
-## Verification status - read before using
-
-The implementation and complete driver were exercised with generated synthetic
-fonts, including variable-font instancing, save/reload validation and PNG proof
-generation. The synthetic test suite passes.
-
-**The complete real Ubuntu/Bront inputs could not be downloaded into the
-implementation environment. A real-font build, visual comparison and
-Windows/Qt rendering acceptance have NOT been completed.** In particular, an
-assertion or a geometric matching assumption may still need adjustment when
-first applied to the actual pinned inputs. This is a working prototype builder,
-not a claim of a production-ready or visually approved font.
+## Read before using
 
 This archive contains code and documentation, not font files. On your computer,
 the builder downloads its pinned inputs, checks their identities, builds the
