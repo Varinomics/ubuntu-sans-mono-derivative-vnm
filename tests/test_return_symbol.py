@@ -48,8 +48,8 @@ class ReturnSymbolTests(unittest.TestCase):
         result, report = self.build()
         name = v.required(result, CP)
         self.assertEqual(name, "vnm.uni23CE")
-        self.assertIn("Version 1.103", result["name"].getDebugName(5))
-        self.assertIn("vnm 0.1.2", result["name"].getDebugName(5))
+        self.assertIn("Version 1.104", result["name"].getDebugName(5))
+        self.assertIn("vnm 0.1.3", result["name"].getDebugName(5))
         self.assertNotEqual(name, v.required(result, 0x21B5))
         self.assertNotEqual(name, v.required(result, 0x2386))
         for other in (0x21B5, 0x2386):

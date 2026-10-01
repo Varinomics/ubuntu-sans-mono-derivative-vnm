@@ -128,4 +128,16 @@ the existing H advance, as for the other added keyboard symbols. Existing line
 metrics and glyph IDs are preserved. Added glyphs receive no TrueType hinting.
 
 This revision adds ordinary arrows U+2190/U+2191/U+2192/U+2193 as separate filled single-cell symbols. The existing white-arrow keyboard symbols remain distinct.
-The small source-version increment is 0.1.2; the output font revision is 1.103.
+## Braille dot grid
+
+Unicode Braille patterns U+2800–U+28FF retain their existing mappings and glyph
+IDs. The eight single-dot outlines are translated onto a grid with pitch equal
+to half the cell advance in both axes; all other patterns compose those dots
+using Unicode's dot-number bit order. This makes repeated full patterns form a
+uniform lattice across character boundaries. The upstream round outlines and
+the vertical center of the original full pattern are preserved. The blank
+pattern has no outline and its advance matches the other Braille cells, removing
+the upstream nine-unit width difference. Text line spacing remains
+an application setting; the font's line metrics are unchanged.
+
+The builder version is 0.1.3; the output font revision is 1.104.

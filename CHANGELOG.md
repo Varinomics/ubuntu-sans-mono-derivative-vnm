@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.1.3 - 1 October 2026
+
+- Reposition all Braille patterns U+2800–U+28FF on a square dot grid, with equal
+  spacing inside each character and across adjacent characters.
+- Preserve the original dot outlines, vertical center, other character advances and
+  all outlines outside the Braille block relative to 0.1.2.
+- Keep U+2800 blank, normalize its advance to the other Braille cells, and
+  preserve Unicode dot-pattern semantics.
+- Bump the output font revision to 1.104 and builder version to 0.1.3.
+
 ## 0.1.2 - 17 September 2026
 
 - Add ordinary directional arrows U+2190/U+2191/U+2192/U+2193 as native procedural glyphs.

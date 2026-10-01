@@ -38,11 +38,13 @@ from fontTools.varLib.instancer import instantiateVariableFont
 
 FAMILY = "Ubuntu Sans Mono derivative vnm"
 PS_NAME = "UbuntuSansMonoDerivativeVnm-Regular"
-VERSION = "0.1.2"
+VERSION = "0.1.3"
 CORE = "$0*_- =~%GjlJt".replace(" ", "")
 LETTERS = "GjlJt"
 POWERLINE = (0xE0A0, 0xE0A1, 0xE0A2, 0xE0B0, 0xE0B1, 0xE0B2, 0xE0B3)
 KEYBOARD = (0x232B, 0x2326, 0x21B5, 0x21E5, 0x21E4, 0x21B9, 0x21E7, 0x21E9, 0x21EA, 0x2386, 0x23CE, 0x2190, 0x2191, 0x2192, 0x2193)
+# Unicode dot numbers 1..8, in codepoint bit order (column, row from top).
+BRAILLE_DOTS = ((0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2), (0, 3), (1, 3))
 UPSTREAM_REV = "c57353c1772eb8aaab9c539e3d42c971a03a5fcd"
 BRONT_REV = "aef23d9a11416655a8351230edb3c2377061c077"
 # Git object identifiers taken from GitHub's contents API, not ordinary SHA-1s.
@@ -653,13 +655,46 @@ def add_mapping(font: TTFont, cp: int, name: str, glyph: Glyph, width: int) -> N
     font["maxp"].numGlyphs = len(font.getGlyphOrder())
 
 
+def patch_braille(font: TTFont, baseline: TTFont) -> tuple[set[str], dict[str, Any]]:
+    full_name = required(baseline, 0x28FF)
+    advance   = baseline["hmtx"].metrics[full_name][0]
+    full_box  = bounds(baseline.getGlyphSet(), full_name)
+    pitch     = advance / 2
+    center_y  = (full_box[1] + full_box[3]) / 2
+    dot_names = [required(baseline, 0x2800 + (1 << bit)) for bit in range(8)]
+
+    # Half-cell pitch makes the gap to the next character equal to the gap
+    # inside this one. Keep the upstream dots and the block's vertical center.
+    for name, (column, row) in zip(dot_names, BRAILLE_DOTS):
+        box = bounds(baseline.getGlyphSet(), name)
+        dx  = advance / 4 + column * pitch - (box[0] + box[2]) / 2
+        dy  = center_y + (1.5 - row) * pitch - (box[1] + box[3]) / 2
+        glyph = draw_transformed(baseline, name, (1, 0, 0, 1, dx, dy))
+        install_glyph(font, name, glyph, advance)
+
+    modified = set(dot_names)
+    for pattern in range(256):
+        name = required(baseline, 0x2800 + pattern)
+        if name in modified:
+            continue
+        pen = TTGlyphPen(font["glyf"])
+        for bit, dot_name in enumerate(dot_names):
+            if pattern & (1 << bit):
+                pen.addComponent(dot_name, (1, 0, 0, 1, 0, 0))
+        install_glyph(font, name, pen.glyph(), advance)
+    modified.update(required(baseline, cp) for cp in range(0x2800, 0x2900))
+    return modified, {"pitch": pitch, "center_y": center_y, "advance": advance,
+                      "original_blank_advance": baseline["hmtx"].metrics[required(baseline, 0x2800)][0],
+                      "codepoints": 256, "dot_outlines": "upstream, translated only"}
+
+
 def rename(font: TTFont, epoch: int) -> None:
     names = font["name"]
     names_to_replace = {1,2,3,4,5,6,16,17,18,21,22,25}
     names.names = [record for record in names.names if record.nameID not in names_to_replace]
     values = {
-        1: FAMILY, 2: "Regular", 3: f"1.103;VNM;{PS_NAME}",
-        4: f"{FAMILY} Regular", 5: f"Version 1.103; vnm {VERSION}; upstream 1.100",
+        1: FAMILY, 2: "Regular", 3: f"1.104;VNM;{PS_NAME}",
+        4: f"{FAMILY} Regular", 5: f"Version 1.104; vnm {VERSION}; upstream 1.100",
         6: PS_NAME, 16: FAMILY, 17: "Regular",
     }
     for key, value in values.items():
@@ -676,7 +711,7 @@ def rename(font: TTFont, epoch: int) -> None:
     font["OS/2"].usWeightClass = 400  # derivative family's named Regular style
     font["OS/2"].fsSelection = (font["OS/2"].fsSelection & ~((1<<0)|(1<<5)|(1<<9))) | (1<<6)
     font["head"].macStyle &= ~3
-    font["head"].fontRevision = 1.103
+    font["head"].fontRevision = 1.104
     font["head"].created = font["head"].modified = epoch + 2082844800
     font.recalcTimestamp = False
     font["post"].italicAngle = 0
@@ -763,13 +798,16 @@ def build_variant(upstream: TTFont, original: TTFont, bront: TTFont,
             name = f"vnm.uni{cp:04X}"
             add_mapping(font, cp, name, glyph, advance)
             added.append({"codepoint": f"U+{cp:04X}", "glyph": name, "source": "Bront"})
+    braille_names, braille_grid = patch_braille(font, baseline)
+    modified.update(braille_names)
     rename(font, epoch)
     report = {
         "builder_version": VERSION, "fonttools_version": FONTTOOLS_VERSION,
         "family": FAMILY, "style": "Regular", "scope": "upright static prototype",
         "scale": {"x": sx, "y": sy, "baseline_y": baseline_y},
         "operations": operations, "modified_or_dependent_glyphs": sorted(modified),
-        "added_glyphs": added, "accent_component_adjustments": placements,
+        "added_glyphs": added, "braille_grid": braille_grid,
+        "accent_component_adjustments": placements,
         "mark_anchor_adjustments": anchors, "warnings": warnings,
         "hinting": "Upstream instructions preserved except on changed glyphs and their dependent composites; modified outlines are unhinted",
         "programming_ligatures_added": False,
@@ -788,7 +826,11 @@ def validate(baseline: TTFont, result: TTFont, report: dict[str, Any],
     original_order = baseline.getGlyphOrder()
     if result.getGlyphOrder()[:len(original_order)] != original_order:
         raise AssertionError("Original glyph IDs were reordered")
-    if any(result["hmtx"].metrics[n][0] != baseline["hmtx"].metrics[n][0] for n in original_order):
+    changed_advances = {n for n in original_order
+                        if result["hmtx"].metrics[n][0] != baseline["hmtx"].metrics[n][0]}
+    blank_name = required(baseline, 0x2800)
+    cell_advance = baseline["hmtx"].metrics[required(baseline, 0x28FF)][0]
+    if changed_advances - {blank_name} or result["hmtx"].metrics[blank_name][0] != cell_advance:
         raise AssertionError("An existing advance width changed")
     allowed = set(report["modified_or_dependent_glyphs"])
     unexpectedly_changed = [n for n in original_order if n not in allowed and
@@ -833,7 +875,7 @@ def validate(baseline: TTFont, result: TTFont, report: dict[str, Any],
         "status": "PASS", "upstream_mapped_codepoints": len(old_map),
         "result_mapped_codepoints": len(new_map), "missing_upstream_codepoints": [],
         "preserved_original_glyph_ids": len(original_order),
-        "preserved_original_advances": len(original_order),
+        "preserved_original_advances": len(original_order) - len(changed_advances),
         "unchanged_unrelated_outlines": True, "unchanged_lowercase_i": True,
         "unchanged_line_metrics": True, "unchanged_GSUB": True,
         "blocks": block_counts, "extra_symbols": extra_checks,
