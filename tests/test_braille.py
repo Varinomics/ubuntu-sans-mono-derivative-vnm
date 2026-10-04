@@ -43,9 +43,9 @@ class BrailleTests(unittest.TestCase):
     def test_all_patterns_follow_unicode_dot_names(self):
         # The external oracle is the Unicode Braille Patterns naming scheme:
         # https://www.unicode.org/charts/PDF/U2800.pdf
-        grid = {"1": (150, 750), "2": (150, 450), "3": (150, 150),
-                "4": (450, 750), "5": (450, 450), "6": (450, 150),
-                "7": (150, -150), "8": (450, -150)}
+        grid = {"1": (150, 788), "2": (150, 463), "3": (150, 138),
+                "4": (450, 788), "5": (450, 463), "6": (450, 138),
+                "7": (150, -187), "8": (450, -187)}
         for cp in range(0x2800, 0x2900):
             with self.subTest(codepoint=f"U+{cp:04X}"):
                 name = v.required(self.result, cp)
@@ -53,15 +53,26 @@ class BrailleTests(unittest.TestCase):
                 self.assertEqual(contour_centers(self.result, name), sorted(grid[d] for d in digits))
                 self.assertEqual(self.result["hmtx"].metrics[name][0], 600)
 
-    def test_spacing_is_equal_within_and_between_characters(self):
+    def test_spacing_is_equal_within_and_between_cells_and_lines(self):
+        # A uniform lattice repeats twice per 600-unit cell and four times
+        # per 1300-unit line. Integer outline coordinates round the phase.
         name = v.required(self.result, 0x28FF)
         centers = contour_centers(self.result, name)
         columns = sorted({x for x, y in centers})
         rows    = sorted({y for x, y in centers})
         tiled_columns = columns + [x + 600 for x in columns]
-        spacings = [b - a for a, b in zip(tiled_columns, tiled_columns[1:])]
-        spacings.extend(b - a for a, b in zip(rows, rows[1:]))
-        self.assertEqual(set(spacings), {300})
+        tiled_rows    = sorted(rows + [y - 1300 for y in rows])
+        self.assertEqual({b - a for a, b in zip(tiled_columns, tiled_columns[1:])}, {300})
+        self.assertEqual({b - a for a, b in zip(tiled_rows, tiled_rows[1:])}, {325})
+        self.assertAlmostEqual((rows[0] + rows[-1]) / 2, 300, delta=.5)
+
+    def test_line_gap_is_included_in_the_lattice_period(self):
+        self.baseline["hhea"].lineGap = 100
+        v.patch_braille(self.result, self.baseline)
+        centers = contour_centers(self.result, v.required(self.result, 0x28FF))
+        rows = sorted({y for x, y in centers})
+        tiled_rows = sorted(rows + [y - 1400 for y in rows])
+        self.assertEqual({b - a for a, b in zip(tiled_rows, tiled_rows[1:])}, {350})
         self.assertEqual((rows[0] + rows[-1]) / 2, 300)
 
     def test_dot_outlines_are_only_translated(self):

@@ -38,7 +38,7 @@ from fontTools.varLib.instancer import instantiateVariableFont
 
 FAMILY = "Ubuntu Sans Mono derivative vnm"
 PS_NAME = "UbuntuSansMonoDerivativeVnm-Regular"
-VERSION = "0.1.3"
+VERSION = "0.1.4"
 CORE = "$0*_- =~%GjlJt".replace(" ", "")
 LETTERS = "GjlJt"
 POWERLINE = (0xE0A0, 0xE0A1, 0xE0A2, 0xE0B0, 0xE0B1, 0xE0B2, 0xE0B3)
@@ -656,19 +656,22 @@ def add_mapping(font: TTFont, cp: int, name: str, glyph: Glyph, width: int) -> N
 
 
 def patch_braille(font: TTFont, baseline: TTFont) -> tuple[set[str], dict[str, Any]]:
-    full_name = required(baseline, 0x28FF)
-    advance   = baseline["hmtx"].metrics[full_name][0]
-    full_box  = bounds(baseline.getGlyphSet(), full_name)
-    pitch     = advance / 2
-    center_y  = (full_box[1] + full_box[3]) / 2
+    full_name   = required(baseline, 0x28FF)
+    advance     = baseline["hmtx"].metrics[full_name][0]
+    full_box    = bounds(baseline.getGlyphSet(), full_name)
+    line        = baseline["hhea"]
+    line_height = line.ascent - line.descent + line.lineGap
+    pitch_x     = advance / 2
+    pitch_y     = line_height / 4
+    center_y    = (full_box[1] + full_box[3]) / 2
     dot_names = [required(baseline, 0x2800 + (1 << bit)) for bit in range(8)]
 
-    # Half-cell pitch makes the gap to the next character equal to the gap
-    # inside this one. Keep the upstream dots and the block's vertical center.
+    # Two columns per cell and four rows per nominal line make both seams
+    # continuous. Keep the upstream dots and the block's vertical center.
     for name, (column, row) in zip(dot_names, BRAILLE_DOTS):
         box = bounds(baseline.getGlyphSet(), name)
-        dx  = advance / 4 + column * pitch - (box[0] + box[2]) / 2
-        dy  = center_y + (1.5 - row) * pitch - (box[1] + box[3]) / 2
+        dx  = advance / 4 + column * pitch_x - (box[0] + box[2]) / 2
+        dy  = center_y + (1.5 - row) * pitch_y - (box[1] + box[3]) / 2
         glyph = draw_transformed(baseline, name, (1, 0, 0, 1, dx, dy))
         install_glyph(font, name, glyph, advance)
 
@@ -683,7 +686,8 @@ def patch_braille(font: TTFont, baseline: TTFont) -> tuple[set[str], dict[str, A
                 pen.addComponent(dot_name, (1, 0, 0, 1, 0, 0))
         install_glyph(font, name, pen.glyph(), advance)
     modified.update(required(baseline, cp) for cp in range(0x2800, 0x2900))
-    return modified, {"pitch": pitch, "center_y": center_y, "advance": advance,
+    return modified, {"pitch_x": pitch_x, "pitch_y": pitch_y, "line_height": line_height,
+                      "center_y": center_y, "advance": advance,
                       "original_blank_advance": baseline["hmtx"].metrics[required(baseline, 0x2800)][0],
                       "codepoints": 256, "dot_outlines": "upstream, translated only"}
 
@@ -693,8 +697,8 @@ def rename(font: TTFont, epoch: int) -> None:
     names_to_replace = {1,2,3,4,5,6,16,17,18,21,22,25}
     names.names = [record for record in names.names if record.nameID not in names_to_replace]
     values = {
-        1: FAMILY, 2: "Regular", 3: f"1.104;VNM;{PS_NAME}",
-        4: f"{FAMILY} Regular", 5: f"Version 1.104; vnm {VERSION}; upstream 1.100",
+        1: FAMILY, 2: "Regular", 3: f"1.105;VNM;{PS_NAME}",
+        4: f"{FAMILY} Regular", 5: f"Version 1.105; vnm {VERSION}; upstream 1.100",
         6: PS_NAME, 16: FAMILY, 17: "Regular",
     }
     for key, value in values.items():
@@ -711,7 +715,7 @@ def rename(font: TTFont, epoch: int) -> None:
     font["OS/2"].usWeightClass = 400  # derivative family's named Regular style
     font["OS/2"].fsSelection = (font["OS/2"].fsSelection & ~((1<<0)|(1<<5)|(1<<9))) | (1<<6)
     font["head"].macStyle &= ~3
-    font["head"].fontRevision = 1.104
+    font["head"].fontRevision = 1.105
     font["head"].created = font["head"].modified = epoch + 2082844800
     font.recalcTimestamp = False
     font["post"].italicAngle = 0

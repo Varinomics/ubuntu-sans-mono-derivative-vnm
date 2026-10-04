@@ -131,13 +131,17 @@ This revision adds ordinary arrows U+2190/U+2191/U+2192/U+2193 as separate fille
 ## Braille dot grid
 
 Unicode Braille patterns U+2800–U+28FF retain their existing mappings and glyph
-IDs. The eight single-dot outlines are translated onto a grid with pitch equal
-to half the cell advance in both axes; all other patterns compose those dots
-using Unicode's dot-number bit order. This makes repeated full patterns form a
-uniform lattice across character boundaries. The upstream round outlines and
-the vertical center of the original full pattern are preserved. The blank
+IDs. The eight single-dot outlines are translated onto a grid with horizontal
+pitch equal to half the cell advance and vertical pitch equal to one quarter of
+the nominal line height (`hhea.ascent - hhea.descent + hhea.lineGap`); all other
+patterns compose those dots using Unicode's dot-number bit order. This makes
+repeated full patterns form a uniform rectangular lattice across character and
+nominal text-line boundaries. At the default source weight, horizontal pitch is
+280 units and vertical pitch is 300 units for the 1200-unit nominal line height.
+The upstream round outlines and the vertical center of the original full pattern
+are preserved. The blank
 pattern has no outline and its advance matches the other Braille cells, removing
-the upstream nine-unit width difference. Text line spacing remains
-an application setting; the font's line metrics are unchanged.
+the upstream nine-unit width difference. The font's line metrics are unchanged;
+application line spacing and pixel rounding can add space between text lines.
 
-The builder version is 0.1.3; the output font revision is 1.104.
+The builder version is 0.1.4; the output font revision is 1.105.

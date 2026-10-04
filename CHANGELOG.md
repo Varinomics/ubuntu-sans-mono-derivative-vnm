@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.4 - 4 October 2026
+
+- Spread Braille dot rows to one quarter of the nominal font line height,
+  making their vertical spacing equal inside glyphs and across text lines.
+- Preserve horizontal continuity, original dot outlines, the block's vertical
+  center, other glyphs and all line metrics relative to 0.1.3.
+- Bump the output font revision to 1.105 and builder version to 0.1.4.
+
 ## 0.1.3 - 1 October 2026
 
 - Reposition all Braille patterns U+2800–U+28FF on a square dot grid, with equal

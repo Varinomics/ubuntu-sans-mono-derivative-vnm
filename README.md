@@ -1,6 +1,6 @@
 # Ubuntu Sans Mono derivative vnm
 
-**Upright Regular prototype build project, version 0.1.3.**
+**Upright Regular prototype build project, version 0.1.4.**
 
 This project implements Bront's final targeted character designs on a static
 instance of Canonical's Ubuntu Sans Mono v1.100. The installed family name is
@@ -93,12 +93,14 @@ from screenshots. `i` is intentionally untouched. All unrelated modern outlines,
 existing glyph IDs, non-Braille advances and line metrics are required to survive.
 No programming ligatures are added; upstream substitution features are retained.
 
-All 256 Braille patterns U+2800–U+28FF use a square dot grid. The dot pitch is
-half the character advance in both axes, including across adjacent characters.
+All 256 Braille patterns U+2800–U+28FF use a rectangular dot grid. Horizontal
+pitch is half the character advance; vertical pitch is one quarter of the
+nominal line height (`hhea.ascent - hhea.descent + hhea.lineGap`). Repeated
+patterns therefore continue uniformly across characters and nominal text lines.
 The upstream round dot outlines and the block's vertical center are preserved;
 U+2800 remains blank, with its advance normalized to the other Braille cells.
-All other existing advances are preserved. Application line spacing controls the
-distance between separate text lines.
+All other existing advances and line metrics are preserved. Application line
+spacing and pixel rounding can add space between separate text lines.
 
 The port propagates composite references and attempts exact base-contour
 replacement in canonically decomposable accented forms. It adjusts detached top
