@@ -594,7 +594,29 @@ def keyboard_glyph(cp: int, width: float, cap: float, stem: float) -> Glyph:
         draw_tab(cap*.36, "right")
         draw_tab(cap*.64, "left")
     elif cp == 0x21E7:
-        draw_white_arrow("up")
+        mid = width/2
+        half = min(width*.14, cap*.105)
+        head_width = width*.32
+        head_height = (top-bottom)*.4
+        shoulder = top-head_height
+        wall = min(stem*.62, half*.44)
+        outer = [(mid,top), (mid-head_width,shoulder), (mid-half,shoulder),
+                 (mid-half,bottom), (mid+half,bottom), (mid+half,shoulder),
+                 (mid+head_width,shoulder)]
+        # Offset the head and shaft edges uniformly; opposite winding keeps
+        # both parts hollow under the TrueType non-zero fill rule.
+        slope = head_height/head_width
+        diagonal_offset = wall*math.sqrt(1+slope*slope)
+        inner_top = top-diagonal_offset
+        inner_shoulder = shoulder+wall
+        inner_head_width = (top-inner_shoulder-diagonal_offset)/slope
+        inner_half = half-wall
+        inner = [(mid,inner_top), (mid-inner_head_width,inner_shoulder),
+                 (mid-inner_half,inner_shoulder), (mid-inner_half,bottom+wall),
+                 (mid+inner_half,bottom+wall), (mid+inner_half,inner_shoulder),
+                 (mid+inner_head_width,inner_shoulder)]
+        polygon(pen, outer)
+        polygon(pen, inner, clockwise=False)
     elif cp == 0x21E9:
         draw_white_arrow("down")
     elif cp == 0x21EA:
