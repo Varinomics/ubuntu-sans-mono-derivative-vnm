@@ -1,6 +1,6 @@
 # Ubuntu Sans Mono derivative vnm
 
-**Upright Regular prototype build project, version 0.1.4.**
+**Upright Regular prototype build project, version 0.1.5.**
 
 This project implements Bront's final targeted character designs on a static
 instance of Canonical's Ubuntu Sans Mono v1.100. The installed family name is
@@ -113,6 +113,11 @@ reported separately.
 Missing `⌫` U+232B, `⌦` U+2326, `↵` U+21B5, `⇥` U+21E5, `⇤` U+21E4, `↹` U+21B9,
 `⇧` U+21E7, `⇩` U+21E9, `⇪` U+21EA, `⎆` U+2386, `⏎` U+23CE, and ordinary arrows
 `←` U+2190, `↑` U+2191, `→` U+2192, `↓` U+2193 receive original procedural outlines. Seven missing Bront Powerline private-use symbols are added.
+The activity symbols U+2722, U+2733, U+2736, U+273B and U+273D also receive
+original procedural outlines. They keep distinct four-spoke, eight-spoke,
+six-point and teardrop shapes, with the normal character advance and ink inside
+one character cell.
+
 Existing mappings are never replaced for these extras. Disable these additions
 with `--no-keyboard` and/or `--no-powerline` when testing the core port alone.
 

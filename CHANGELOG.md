@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.5 - 24 October 2026
+
+- Add original cell-contained outlines for U+2722, U+2733, U+2736, U+273B and U+273D activity symbols.
+- Preserve existing outlines, character advances, family naming and line metrics.
+- Bump the output font revision to 1.106 and builder version to 0.1.5.
+
 ## 0.1.4 - 4 October 2026
 
 - Spread Braille dot rows to one quarter of the nominal font line height,

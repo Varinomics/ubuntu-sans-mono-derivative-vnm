@@ -38,13 +38,14 @@ from fontTools.varLib.instancer import instantiateVariableFont
 
 FAMILY = "Ubuntu Sans Mono derivative vnm"
 PS_NAME = "UbuntuSansMonoDerivativeVnm-Regular"
-VERSION = "0.1.4"
+VERSION = "0.1.5"
 CORE = "$0*_- =~%GjlJt".replace(" ", "")
 LETTERS = "GjlJt"
 POWERLINE = (0xE0A0, 0xE0A1, 0xE0A2, 0xE0B0, 0xE0B1, 0xE0B2, 0xE0B3)
 KEYBOARD = (0x232B, 0x2326, 0x21B5, 0x21E5, 0x21E4, 0x21B9, 0x21E7, 0x21E9, 0x21EA, 0x2386, 0x23CE, 0x2190, 0x2191, 0x2192, 0x2193)
 # Unicode dot numbers 1..8, in codepoint bit order (column, row from top).
 BRAILLE_DOTS = ((0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2), (0, 3), (1, 3))
+SPINNER = (0x2722, 0x2733, 0x2736, 0x273B, 0x273D)
 UPSTREAM_REV = "c57353c1772eb8aaab9c539e3d42c971a03a5fcd"
 BRONT_REV = "aef23d9a11416655a8351230edb3c2377061c077"
 # Git object identifiers taken from GitHub's contents API, not ordinary SHA-1s.
@@ -654,6 +655,58 @@ def keyboard_glyph(cp: int, width: float, cap: float, stem: float) -> Glyph:
     return result
 
 
+def spinner_glyph(cp: int, width: float, center_y: float, stem: float) -> Glyph:
+    """Original Unicode asterisk/star outlines sized to the font's own cell."""
+    pen = TTGlyphPen(None)
+    center_x = width / 2
+    radius = width * .45
+
+    if cp == 0x2733:
+        # Eight straight spokes, distinct from the rounded teardrop states.
+        half_stem = stem * .16
+        for spoke in range(8):
+            angle = spoke * math.pi / 4
+            cosine, sine = math.cos(angle), math.sin(angle)
+            points = [(0, half_stem), (radius, half_stem),
+                      (radius, -half_stem), (0, -half_stem)]
+            polygon(pen, [(center_x + x*cosine - y*sine,
+                           center_y + x*sine + y*cosine) for x, y in points])
+    elif cp == 0x2736:
+        # Six sharp points with a solid center.
+        points = []
+        for point in range(12):
+            angle = math.pi / 2 + point * math.pi / 6
+            distance = radius if point % 2 == 0 else radius * .36
+            points.append((center_x + distance * math.cos(angle),
+                           center_y + distance * math.sin(angle)))
+        polygon(pen, points)
+    elif cp in (0x2722, 0x273B, 0x273D):
+        spokes = 4 if cp == 0x2722 else 6
+        half_bulb = radius * (.24 if cp == 0x273D else .14)
+        rotation = math.pi / 4 if cp == 0x2722 else math.pi / 2
+        for spoke in range(spokes):
+            angle = rotation + spoke * 2 * math.pi / spokes
+            cosine, sine = math.cos(angle), math.sin(angle)
+
+            def point(x: float, y: float) -> tuple[float, float]:
+                return (center_x + x*cosine - y*sine,
+                        center_y + x*sine + y*cosine)
+
+            pen.moveTo(point(0, 0))
+            pen.qCurveTo(point(radius * .50, half_bulb * 1.25),
+                         point(radius * .84, half_bulb))
+            pen.qCurveTo(point(radius * 1.12, 0),
+                         point(radius * .84, -half_bulb))
+            pen.qCurveTo(point(radius * .50, -half_bulb * 1.25), point(0, 0))
+            pen.closePath()
+    else:
+        raise ValueError(f"Unsupported spinner glyph U+{cp:04X}")
+
+    glyph = pen.glyph()
+    glyph.recalcBounds(None)
+    return glyph
+
+
 def add_mapping(font: TTFont, cp: int, name: str, glyph: Glyph, width: int) -> None:
     if cp in cmap(font):
         raise ValueError(f"Refusing to overwrite existing U+{cp:04X}")
@@ -719,8 +772,8 @@ def rename(font: TTFont, epoch: int) -> None:
     names_to_replace = {1,2,3,4,5,6,16,17,18,21,22,25}
     names.names = [record for record in names.names if record.nameID not in names_to_replace]
     values = {
-        1: FAMILY, 2: "Regular", 3: f"1.105;VNM;{PS_NAME}",
-        4: f"{FAMILY} Regular", 5: f"Version 1.105; vnm {VERSION}; upstream 1.100",
+        1: FAMILY, 2: "Regular", 3: f"1.106;VNM;{PS_NAME}",
+        4: f"{FAMILY} Regular", 5: f"Version 1.106; vnm {VERSION}; upstream 1.100",
         6: PS_NAME, 16: FAMILY, 17: "Regular",
     }
     for key, value in values.items():
@@ -737,7 +790,7 @@ def rename(font: TTFont, epoch: int) -> None:
     font["OS/2"].usWeightClass = 400  # derivative family's named Regular style
     font["OS/2"].fsSelection = (font["OS/2"].fsSelection & ~((1<<0)|(1<<5)|(1<<9))) | (1<<6)
     font["head"].macStyle &= ~3
-    font["head"].fontRevision = 1.105
+    font["head"].fontRevision = 1.106
     font["head"].created = font["head"].modified = epoch + 2082844800
     font.recalcTimestamp = False
     font["post"].italicAngle = 0
@@ -824,6 +877,14 @@ def build_variant(upstream: TTFont, original: TTFont, bront: TTFont,
             name = f"vnm.uni{cp:04X}"
             add_mapping(font, cp, name, glyph, advance)
             added.append({"codepoint": f"U+{cp:04X}", "glyph": name, "source": "Bront"})
+    for cp in SPINNER:
+        if cp in cmap(font):
+            continue
+        name = f"vnm.uni{cp:04X}"
+        center_y = (native_plus[1] + native_plus[3]) / 2
+        glyph = spinner_glyph(cp, advance, center_y, h_stem(baseline))
+        add_mapping(font, cp, name, glyph, advance)
+        added.append({"codepoint": f"U+{cp:04X}", "glyph": name, "source": "vnm geometry"})
     braille_names, braille_grid = patch_braille(font, baseline)
     modified.update(braille_names)
     rename(font, epoch)
@@ -879,6 +940,7 @@ def validate(baseline: TTFont, result: TTFont, report: dict[str, Any],
         if require_full_coverage and count != b-a:
             raise AssertionError(f"{key}: expected full upstream coverage, found {count}/{b-a}")
     required_extra = list(KEYBOARD if keyboard else ()) + list(POWERLINE if powerline else ())
+    required_extra += list(SPINNER)
     extra_checks = {}
     for cp in required_extra:
         n = required(result, cp)
@@ -886,6 +948,11 @@ def validate(baseline: TTFont, result: TTFont, report: dict[str, Any],
         if b[2] <= b[0] or b[3] <= b[1]:
             raise AssertionError(f"Empty added symbol U+{cp:04X}")
         extra_checks[f"U+{cp:04X}"] = True
+    for cp in SPINNER:
+        name = required(result, cp)
+        box = bounds(result.getGlyphSet(), name)
+        if result["hmtx"].metrics[name][0] != cell_advance or box[0] < 0 or box[2] > cell_advance:
+            raise AssertionError(f"Spinner symbol exceeds its monospace cell: U+{cp:04X}")
     for tag in ("GSUB",):
         if (tag in baseline) != (tag in result):
             raise AssertionError(f"{tag} was added or removed unexpectedly")
