@@ -137,7 +137,7 @@ class DerivativeTests(unittest.TestCase):
             checked=v.validate(baseline,reread,report)
         self.assertEqual(checked["status"],"PASS")
         self.assertEqual(checked["result_mapped_codepoints"]-checked["upstream_mapped_codepoints"],
-                         len(v.KEYBOARD)+len(v.POWERLINE))
+                         len(v.KEYBOARD)+len(v.POWERLINE)+len(v.SPINNER))
         self.assertEqual(len(report["operations"]),13)
 
     def test_lowercase_i_outline_and_instructions_survive(self):
@@ -193,12 +193,14 @@ class DerivativeTests(unittest.TestCase):
         self.assertEqual(v.required(result,0x232B),"existingBackspace")
         self.assertEqual(v.outline_signature(result,"existingBackspace"),
                          v.outline_signature(self.upstream,"existingBackspace"))
-        self.assertEqual(len(report["added_glyphs"]),len(v.KEYBOARD)+len(v.POWERLINE)-1)
+        self.assertEqual(len(report["added_glyphs"]),len(v.KEYBOARD)+len(v.POWERLINE)+len(v.SPINNER)-1)
 
-    def test_optional_extras_disabled(self):
+    def test_keyboard_and_powerline_disabled_retain_activity_symbols(self):
+        activity = {0x2722, 0x2733, 0x2736, 0x273B, 0x273D}
         result,report=v.build_variant(self.upstream,self.original,self.bront,keyboard=False,powerline=False)
-        self.assertEqual(set(v.cmap(result)),set(v.cmap(self.upstream)))
-        self.assertEqual(report["added_glyphs"],[])
+        self.assertEqual(set(v.cmap(result)),set(v.cmap(self.upstream)) | activity)
+        self.assertEqual(sorted(entry["codepoint"] for entry in report["added_glyphs"]),
+                         sorted(f"U+{cp:04X}" for cp in activity))
         v.validate(self.upstream,result,report,keyboard=False,powerline=False)
 
     def test_every_keyboard_glyph_is_nonempty_and_within_cell(self):

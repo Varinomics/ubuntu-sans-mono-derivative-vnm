@@ -118,8 +118,9 @@ original procedural outlines. They keep distinct four-spoke, eight-spoke,
 six-point and teardrop shapes, with the normal character advance and ink inside
 one character cell.
 
-Existing mappings are never replaced for these extras. Disable these additions
-with `--no-keyboard` and/or `--no-powerline` when testing the core port alone.
+Existing mappings are never replaced for these additions. `--no-keyboard` and
+`--no-powerline` disable only their respective symbol groups. The five activity
+symbols remain included with either or both options.
 
 ## Important limits
 
@@ -163,3 +164,5 @@ MIT-licensed under `LICENSE-CODE.txt`; external font inputs and font output rema
 subject to the Ubuntu Font Licence and their original notices.
 
 Design rationale and upstream evidence: `docs/DESIGN.md` and `SOURCES.md`.
+Source archive checksum verification and historical build inputs are documented
+in [SOURCES.md](SOURCES.md#source-archive-checksums).

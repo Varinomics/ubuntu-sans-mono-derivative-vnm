@@ -93,7 +93,13 @@ Fifteen missing keyboard/arrow symbols receive original procedural single-cell o
 U+232B, U+2326, U+21B5, U+21E5, U+21E4, U+21B9, U+21E7, U+21E9, U+21EA, U+2386, U+23CE,
 U+2190, U+2191, U+2192 and U+2193. Seven missing Powerline symbols are taken from
 Bront: U+E0A0-E0A2 and U+E0B0-E0B3. Native existing glyphs at these positions are
-not overwritten. These additions can be disabled independently.
+not overwritten. Keyboard/arrow and Powerline additions can be disabled
+independently with `--no-keyboard` and `--no-powerline`.
+
+The five activity symbols U+2722, U+2733, U+2736, U+273B and U+273D are always
+included, preserving any existing mappings and outlines. Missing symbols receive
+distinct procedural outlines with the normal character advance and ink contained
+within one character cell. The keyboard and Powerline options do not disable them.
 
 Powerline symbols use the text's body scale in this prototype. Their junctions
 with colored terminal cells need a separate visual pass at actual line spacing.
@@ -144,4 +150,4 @@ pattern has no outline and its advance matches the other Braille cells, removing
 the upstream nine-unit width difference. The font's line metrics are unchanged;
 application line spacing and pixel rounding can add space between text lines.
 
-The builder version is 0.1.4; the output font revision is 1.105.
+The builder version is 0.1.5; the output font revision is 1.106.

@@ -79,3 +79,56 @@ Licence reference: https://ubuntu.com/legal/font-licence
 Dependency versions are pinned to the versions used for the synthetic tests:
 - https://pypi.org/project/fonttools/4.63.0/
 - https://pypi.org/project/Pillow/12.3.0/
+
+## Source archive checksums
+
+`SHA256SUMS.txt` contains ordinary SHA-256 digests of the tracked file bytes in
+Git, excluding the checksum manifest itself. These are also the bytes written by
+`git archive`: `.gitattributes` keeps text files at LF line endings in new
+checkouts and archives regardless of `core.autocrlf`, and binary files are unchanged.
+The manifest describes the source archive, not a font binary or the inputs used
+for an earlier local font build.
+
+In an extracted source archive, verify the files with:
+
+```sh
+sha256sum --check SHA256SUMS.txt
+```
+
+A checkout made before this line-ending convention may retain CRLF files and
+therefore have different file digests. Verify an archive of the same revision
+instead:
+
+```sh
+git archive --format=zip --output=../font-source.zip HEAD
+```
+
+### Historical 0.1.5 font build
+
+The locally distributed Regular font with SHA-256
+`86f23c1188625152b280df59a63d870b20d4dcd53295c34eac60c070480ce361`
+was built with fontTools 4.56.0 and CRLF bytes of `vnm_font.py` from revision
+`242dfad431b1ebb27cfc3e6cc751432d91258035`. Its recorded builder SHA-256 is
+`5725ffcef86d84b2b432757b0f56ada5463e482df8b9d7453282a67c6ee4c7c6`.
+That provenance remains distinct from the LF source checksums and the dependency
+versions in `requirements.txt`; it does not claim a build with those dependencies.
+
+The [recorded builder source](https://github.com/Varinomics/ubuntu-sans-mono-derivative-vnm/blob/242dfad431b1ebb27cfc3e6cc751432d91258035/vnm_font.py)
+has LF-byte SHA-256
+`0e14e7321460ea6b17dcde1f84519f2503044e7d5ffcba28d8f2dc31f4fa0c0f`.
+To recover the exact historical builder bytes from a clone, read that Git blob
+as bytes and convert LF to CRLF without changing its encoding or other content:
+
+```python
+import hashlib
+import subprocess
+
+source = subprocess.check_output([
+    "git", "show", "242dfad431b1ebb27cfc3e6cc751432d91258035:vnm_font.py"
+])
+historical_source = source.replace(b"\n", b"\r\n")
+print(hashlib.sha256(historical_source).hexdigest())
+```
+
+This recovers the recorded source identity; it is not a claim that a new build
+under a different fontTools version produces identical font bytes.
